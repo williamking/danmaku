@@ -8,7 +8,7 @@ namespace Citron {
     template<typename Any>
     class list : public std::list<Any> {
     private:
-		std::atomic_flag _lock;
+		std::atomic_flag _lock = ATOMIC_FLAG_INIT;
 
     public:
         list() : std::list<Any>() {}
