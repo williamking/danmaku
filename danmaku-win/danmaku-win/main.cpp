@@ -15,6 +15,7 @@
 #include <IPHlpApi.h>
 #include "json\json.h"
 #include "citron.h"
+#include <sstream>
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "lib_json.lib")
@@ -100,7 +101,7 @@ SOCKET SetUpSocket() {
         exit(1);
     }
     freeaddrinfo(result);
-
+		
     if (listen(ListenSocket, SOMAXCONN) == SOCKET_ERROR) {
         std::cout << "Listen failed with error: " << WSAGetLastError()
             << std::endl;
@@ -132,9 +133,13 @@ void deal(SOCKET socket) {
     if (secs < 0)
         secs = 0;
     Json::Value value;
-    value["Name"] = name;
-    value["Time"] = secs;
-    std::string temp = value.asString();
+    value["Name"] = Json::Value(name);
+    value["Time"] = Json::Value(secs);
+	std::stringstream ss;
+	ss << value;
+	std::string temp;
+	std::string subtemp;
+	while (getline(ss, subtemp)) temp += subtemp;
     send(socket, temp.c_str(), temp.length(), 0);
 
     Json::Reader reader;
